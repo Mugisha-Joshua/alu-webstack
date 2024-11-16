@@ -1,32 +1,36 @@
 #!/usr/bin/env bash
-# Configuring a bash script
-# This bash script gets information from
-# a domain and subdomain
-# Function to query and display DNS record information
+# print domains and subdomains
 
-get_record_info() {
-    local subdomain=$1
-    local domain=$2
-    # Use dig to get the DNS record for the subdomain and domain
-    local result=$(dig +short "$subdomain.$domain")
-    
-    # Check if result is empty
-    if [[ -z "$result" ]]; then
-        echo "The subdomain $subdomain is not found."
-    else
-        echo "The subdomain $subdomain is a A record and points to $result"
-    fi
+print_domain_subdomain () {
+    dig "$1" | grep -A1 'ANSWER SECTION:' | sed -r "s/$1./$2/g" | awk -F" " ' NR==2 { print "The subdomain " $1 " is a " $4 " record and points to " $5 }'
 }
 
-# Main script to handle subdomains
-domain=$1
-
-# Check for specific subdomain or all default subdomains
-if [[ -n "$2" ]]; then
-    get_record_info "$2" "$domain"
+if [ "$#" -eq 2 ]
+then
+    print_domain_subdomain "$2.$1" "$2"
 else
-    get_record_info "www" "$domain"
-    get_record_info "lb-01" "$domain"
-    get_record_info "web-01" "$domain"
-    get_record_info "web-02" "$domain"
+    print_domain_subdomain "www.$1" "www"
+    print_domain_subdomain "lb-01.$1" "lb-01"
+    print_domain_subdomain "web-01.$1" "web-01"
+    print_domain_subdomain "web-02.$1" "web-02"
 fi
+~
+~
+~
+~
+~
+~
+~
+~
+-- INSERT --                                                  24,51         Bot
+
+~
+~
+~
+~
+~
+~
+~
+~
+-- INSERT --                                                  24,51         Bot
+
