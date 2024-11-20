@@ -1,16 +1,31 @@
 #!/usr/bin/env bash
-# print domains and subdomains
+# Configuring a bash script
+# This bash script gets information from
+# a domain and subdomain
 
-print_domain_subdomain () {
-    dig "$1" | grep -A1 'ANSWER SECTION:' | sed -r "s/$1./$2/g" | awk -F" " ' NR==2 { print "The subdomain " $1 " is a " $4 " record and points to " $5 }'
+researcher() {
+    domain=$1
+    subdomain=$2
+    record_type=$3
+
+    # Use dig to get the DNS record of the specified type for the subdomain
+    result=$(dig +short "$subdomain.$domain" "$record_type" | awk '{print $1}')
+
+    # If result is not empty, print the result
+    if [[ -n "$result" ]]; then
+        echo "The subdomain $subdomain is a $record_type record and points to $result"
+    else
+        echo "No record found for $subdomain.$domain"
+    fi
 }
 
-if [ "$#" -eq 2 ]
-then
-    print_domain_subdomain "$2.$1" "$2"
+# Check that the domain argument is provided
+if [[ $# -eq 1 ]] && [[ "$1" =~ \.tech$|\.online$ ]]; then
+    for sub_domain in "www" "lb-01" "web-01" "web-02"; do
+	    researcher "$1" "$sub_domain" "A"
+    done
+elif [[ $# -eq 2 ]]; then
+	researcher "$1" "$2" "A"
 else
-    print_domain_subdomain "www.$1" "www"
-    print_domain_subdomain "lb-01.$1" "lb-01"
-    print_domain_subdomain "web-01.$1" "web-01"
-    print_domain_subdomain "web-02.$1" "web-02"
+	echo "Invalid Usage"
 fi
