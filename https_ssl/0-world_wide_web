@@ -5,10 +5,10 @@ researcher() {
     domain=$1
     subdomain=$2
 
-    # Use dig to get the A record for the specified subdomain
-    result=$(dig +short "$subdomain.$domain")
+    # Get the A record using dig
+    result=$(dig +short "$subdomain.$domain" | head -n 1)
 
-    # If result is not empty, print the result
+    # Check if the result is empty
     if [[ -n "$result" ]]; then
         echo "The subdomain $subdomain is a A record and points to $result"
     else
@@ -16,7 +16,7 @@ researcher() {
     fi
 }
 
-# Check that at least the domain argument is provided
+# Validate arguments
 if [[ $# -eq 1 ]]; then
     domain=$1
     for subdomain in "www" "lb-01" "web-01" "web-02"; do
